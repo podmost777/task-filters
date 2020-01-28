@@ -18,11 +18,12 @@ export default class MovieList extends Component {
       release_year === "Выберите год" ? new Date().getFullYear() : release_year;
     const genresList = [];
 
-    genres.map(genre => {
-      if (genre.checked) {
-        genresList.push(genre.id);
+
+    for (let genre in genres) {
+      if (genres[genre].checked) {
+        genresList.push(genres[genre].id);
       }
-    });
+    }
 
     const filterGenres = genresList.join(",");
 

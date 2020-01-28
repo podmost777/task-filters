@@ -124,86 +124,19 @@ export default class App extends React.Component {
         sort_by: "popularity.desc",
         release_year: "Выберите год"
       },
-      page: 1,
-      genres: [
-        {
-          id: 28,
-          checked: false
-        },
-        {
-          id: 12,
-          checked: false
-        },
-        {
-          id: 16,
-          checked: false
-        },
-        {
-          id: 35,
-          checked: false
-        },
-        {
-          id: 80,
-          checked: false
-        },
-        {
-          id: 99,
-          checked: false
-        },
-        {
-          id: 18,
-          checked: false
-        },
-        {
-          id: 10751,
-          checked: false
-        },
-        {
-          id: 14,
-          checked: false
-        },
-        {
-          id: 36,
-          checked: false
-        },
-        {
-          id: 27,
-          checked: false
-        },
-        {
-          id: 10402,
-          checked: false
-        },
-        {
-          id: 9648,
-          checked: false
-        },
-        {
-          id: 10749,
-          checked: false
-        },
-        {
-          id: 878,
-          checked: false
-        },
-        {
-          id: 10770,
-          checked: false
-        },
-        {
-          id: 53,
-          checked: false
-        },
-        {
-          id: 10752,
-          checked: false
-        },
-        {
-          id: 37,
-          checked: false
-        }
-      ]
+      page: 1
     });
+
+    const genres = [...this.state.genres];
+    for (let genre in genres) {
+      genres[genre].checked = false;
+    }
+
+    this.setState({
+      genres
+    })
+   console.log(this.state.genres);
+
   };
 
   onChangeGenres = event => {
