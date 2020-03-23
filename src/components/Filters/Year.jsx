@@ -10,8 +10,17 @@ const getYears = () => {
 
 const years = getYears();
 
-export default class Year extends React.Component {
+export default class Year extends React.PureComponent {
 
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     // console.log(this.props);
+    //     // console.log(nextProps);
+    //     if (nextProps.release_year !== this.props.release_year) {
+    //         console.log('1');
+    //         return true;
+    //     }
+    //     return false;
+    //     };
 
     render() {
         const {release_year, onChangeFilters} = this.props;
@@ -19,7 +28,7 @@ export default class Year extends React.Component {
             <div className="form-group">
                 <label htmlFor="sort_by">Год релиза:</label>
                 <select className="form-control" id="release_year" name="release_year" value={release_year} onChange={onChangeFilters}>
-                    <option key={0} value="">
+                    <option key={-1} value="">
                         Выберите год 
                     </option>
                     {years.map((year, i ) => (

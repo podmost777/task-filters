@@ -1,12 +1,19 @@
 import React from "react";
 import Filters from "./Filters/Filters";
 import MoviesList from "./Movies/MoviesList";
+import Header from "./Header/Header";
+import { fetchApi, API_URL, API_KEY_3 } from "../api/api";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 export default class App extends React.Component {
   constructor() {
     super();
 
     this.state = {
+      user: null,
+      session_id: null,
       filters: {
         sort_by: "popularity.desc",
         release_year: "Выберите год"
@@ -94,6 +101,22 @@ export default class App extends React.Component {
     };
   }
 
+  updateUser = user => {
+    this.setState({
+      user
+    });
+  };
+
+  updateSessionId = session_id => {
+    cookies.set("session_id", session_id, {
+      path: "/",
+      maxAge: 2592000
+    });
+    this.setState({
+      session_id
+    });
+  };
+
   onChangeFilters = event => {
     const value = event.target.value;
     const name = event.target.name;
@@ -134,66 +157,77 @@ export default class App extends React.Component {
 
     this.setState({
       genres
-    })
-   console.log(this.state.genres);
-
+    });
+    console.log(this.state.genres);
   };
 
   onChangeGenres = event => {
-    //console.log(this.state.genres);
     const name = +event.target.name;
-    //const value = event.target.value;
 
     const genres = [...this.state.genres];
 
     for (let genre in genres) {
       if (genres[genre].id === name) {
-        //console.log(genres[genre].checked);
         genres[genre].checked = !genres[genre].checked;
       }
     }
 
-    //console.log(genres);
     this.setState({
       genres
     });
-
-    //console.log(this.state.genres);
   };
 
+  componentDidMount() {
+    const session_id = cookies.get("session_id");
+    if (session_id) {
+      fetchApi(
+        `${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`
+      ).then(user => {
+        this.updateUser(user);
+      });
+    }
+  }
+
   render() {
-    const { filters, page, total_pages, genres } = this.state;
+    const { filters, page, total_pages, genres, user } = this.state;
 
     return (
-      <div className="container">
-        <div className="row mt-4">
-          <div className="col-4">
-            <div className="card" style={{ width: "100%" }}>
-              <div className="card-body">
-                <h3>Фильтры:</h3>
-                <Filters
-                  page={page}
-                  filters={filters}
-                  onChangeFilters={this.onChangeFilters}
-                  onChangePage={this.onChangePage}
-                  total_pages={total_pages}
-                  resetFilters={this.resetFilters}
-                  onChangeGenres={this.onChangeGenres}
-                  genres={genres}
-                />
+      <div>
+        <Header
+          user={user}
+          updateUser={this.updateUser}
+          updateSessionId={this.updateSessionId}
+        />
+        <div className="container">
+          <div className="row mt-4">
+            <div className="col-4">
+              <div className="card" style={{ width: "100%" }}>
+                <div className="card-body">
+                  <h3>Фильтры:</h3>
+                  <Filters
+                    page={page}
+                    filters={filters}
+                    onChangeFilters={this.onChangeFilters}
+                    onChangePage={this.onChangePage}
+                    total_pages={total_pages}
+                    resetFilters={this.resetFilters}
+                    onChangeGenres={this.onChangeGenres}
+                    genres={genres}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-8">
-            <MoviesList
-              filters={filters}
-              page={page}
-              onChangePage={this.onChangePage}
-              onChangeTotalPage={this.onChangeTotalPage}
-              resetFilters={this.resetFilters}
-              genres={genres}
-              onChangeGenres={this.onChangeGenres}
-            />
+            <div className="col-8">
+              <MoviesList
+                filters={filters}
+                page={page}
+                onChangePage={this.onChangePage}
+                onChangeTotalPage={this.onChangeTotalPage}
+                resetFilters={this.resetFilters}
+                genres={genres}
+                onChangeGenres={this.onChangeGenres}
+              />
+            </div>
           </div>
         </div>
       </div>
