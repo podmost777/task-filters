@@ -24,50 +24,33 @@ export default class LoginForm extends React.Component {
   };
 
   handleBlur = e => {
-    const errors = this.validateFields(e.target.name);
-    if (Object.keys(errors).length > 0) {
+    const { name } = e.target;
+    const errors = this.validateFields();
+    const error = errors[name];
+
+    if (error) {
       this.setState(prev => ({
         errors: {
           ...prev.errors,
-          ...errors
+          [name]: error
         }
       }));
     }
   };
 
-  validateFields = name => {
+  validateFields = () => {
     const errors = {};
 
-    if (this.state.username === "" && name === "username") {
+    if (this.state.username === "") {
       errors.username = "Not empty";
-      return errors;
     }
 
-    if (this.state.password === "" && name === "password") {
+    if (this.state.password === "") {
       errors.password = "Not empty";
-      return errors;
     }
 
-    if (
-      this.state.repeatPassword !== this.state.password &&
-      name === "repeatPassword"
-    ) {
+    if (this.state.repeatPassword !== this.state.password) {
       errors.repeatPassword = "Must be equal password";
-      return errors;
-    }
-
-    if (name === "submit") {
-      if (this.state.username === "") {
-        errors.username = "Not empty";
-      }
-
-      if (this.state.password === "") {
-        errors.password = "Not empty";
-      }
-
-      if (this.state.repeatPassword !== this.state.password) {
-        errors.repeatPassword = "Must be equal password";
-      }
     }
 
     return errors;
@@ -135,7 +118,7 @@ export default class LoginForm extends React.Component {
 
   onLogin = e => {
     e.preventDefault();
-    const errors = this.validateFields(e.target.name);
+    const errors = this.validateFields();
     if (Object.keys(errors).length > 0) {
       this.setState(prev => ({
         errors: {
