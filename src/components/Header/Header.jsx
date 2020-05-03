@@ -4,7 +4,7 @@ import User from "./User";
 
 class Header extends React.Component {
   render() {
-    const { user, updateUser, updateSessionId } = this.props;
+    const { user, toggleModal, showModal } = this.props;
     return (
       <nav className="navbar navbar-dark bg-primary">
         <div className="container">
@@ -16,9 +16,9 @@ class Header extends React.Component {
             </li>
           </ul>
           {user ? (
-            <User user={user} />
+            <User />
           ) : (
-            <Login updateUser={updateUser} updateSessionId={updateSessionId} />
+            <Login toggleModal={toggleModal} showModal={showModal}/>
           )}
         </div>
       </nav>

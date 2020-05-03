@@ -1,25 +1,34 @@
 import React from "react";
-import genresItems from "./genres";
+import genresList from "./genres";
+import PropTypes from "prop-types";
 
-export default class Genre extends React.Component {
-  render() {
-    const { onChangeGenres, genres } = this.props;
-    const genresList = genresItems.genres.map((genre, i) => (
+const Genre = ({ onChangeGenres, genres }) => (
+  <div className="form-check mb-2">
+    {genresList.genres.map(genre => (
       <div key={genre.id}>
         <input
           className="form-check-input"
           type="checkbox"
-          id={i}
-          name={genre.id}
-          value={genres[i].checked}
+          id={genre.id}
+          name={genre.name}
           onChange={onChangeGenres}
-          checked={genres[i].checked}
+          checked={genres.includes(genre.id)}
         />
-        <label className="form-check-label" htmlFor={i}>
+        <label className="form-check-label" htmlFor={genre.id}>
           {genre.name}
         </label>
       </div>
-    ));
-    return <div className="form-check mb-2">{genresList}</div>;
-  }
-}
+    ))}
+  </div>
+);
+
+Genre.defaultProps = {
+  genres: []
+};
+
+Genre.propTypes = {
+  genres: PropTypes.array.isRequired,
+  onChangeGenres: PropTypes.func.isRequired
+};
+
+export default Genre;

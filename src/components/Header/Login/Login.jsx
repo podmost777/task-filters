@@ -3,32 +3,32 @@ import { Modal, ModalBody } from "reactstrap";
 import LoginForm from "./LoginForm";
 
 export default class Login extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      showModal: false
-    };
-  }
+  state = {
+    canClose: true,
+  };
 
-  toggleModal = () => {
-    this.setState(prev => ({
-      showModal: !prev.showModal
+  toggleClose = () => {
+    if (this.state.canClose) {
+      this.props.toggleModal();
+    }
+  };
+
+  changeClose = () => {
+    this.setState((state) => ({
+      canClose: !state.canClose,
     }));
   };
 
   render() {
+    const { showModal, toggleModal } = this.props;
     return (
       <div>
-        <button
-          className="btn btn-success"
-          type="button"
-          onClick={this.toggleModal}
-        >
+        <button className="btn btn-success" type="button" onClick={toggleModal}>
           Login
         </button>
-        <Modal isOpen={this.state.showModal} toggle={this.toggleModal}>
+        <Modal isOpen={showModal} toggle={this.toggleClose}>
           <ModalBody>
-            <LoginForm updateUser={this.props.updateUser} updateSessionId={this.props.updateSessionId} />
+            <LoginForm changeClose={this.changeClose} />
           </ModalBody>
         </Modal>
       </div>

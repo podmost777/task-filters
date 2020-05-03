@@ -23,10 +23,7 @@ export default class Filters extends React.Component {
         <ResetFilters resetFilters={resetFilters} />
         <SortBy sort_by={sort_by} onChangeFilters={onChangeFilters} />
         <Year release_year={release_year} onChangeFilters={onChangeFilters} />
-        <Genre 
-          onChangeGenres={onChangeGenres}
-          genres={genres}
-        />
+        <Genre onChangeGenres={onChangeGenres} genres={genres}/>
         <Paginator
           page={page}
           onChangePage={onChangePage}

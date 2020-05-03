@@ -1,17 +1,16 @@
 import React from "react";
+import AppContextHOC from "../HOC/AppContextHOC";
+import UserMenu from "./UserMenu";
 
-export default class User extends React.Component {
+
+
+class User extends React.Component {
   render() {
-    const { user } = this.props;
+    const { user, onLogOut, session_id } = this.props;
     return (
-      <div>
-        <img
-          className="rounded-circle"
-          width={"40px"}
-          src={`https://secure.gravatar.com/avatar/${user.avatar.gravatar.hash}.jpg?s=64`}
-          alt="Avatar"
-        />
-      </div>
+      <UserMenu user={user} onLogOut={onLogOut} session_id={session_id}/>
     );
   }
 }
+
+export default AppContextHOC(User);

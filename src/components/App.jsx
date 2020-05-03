@@ -2,10 +2,12 @@ import React from "react";
 import Filters from "./Filters/Filters";
 import MoviesList from "./Movies/MoviesList";
 import Header from "./Header/Header";
-import { fetchApi, API_URL, API_KEY_3 } from "../api/api";
+import CallApi from "../api/api";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
+
+export const AppContext = React.createContext();
 
 export default class App extends React.Component {
   constructor() {
@@ -14,130 +16,63 @@ export default class App extends React.Component {
     this.state = {
       user: null,
       session_id: null,
+      showModal: false,
       filters: {
         sort_by: "popularity.desc",
-        release_year: "Выберите год"
+        release_year: "Выберите год",
       },
       page: 1,
       total_pages: "",
-      genres: [
-        {
-          id: 28,
-          checked: false
-        },
-        {
-          id: 12,
-          checked: false
-        },
-        {
-          id: 16,
-          checked: false
-        },
-        {
-          id: 35,
-          checked: false
-        },
-        {
-          id: 80,
-          checked: false
-        },
-        {
-          id: 99,
-          checked: false
-        },
-        {
-          id: 18,
-          checked: false
-        },
-        {
-          id: 10751,
-          checked: false
-        },
-        {
-          id: 14,
-          checked: false
-        },
-        {
-          id: 36,
-          checked: false
-        },
-        {
-          id: 27,
-          checked: false
-        },
-        {
-          id: 10402,
-          checked: false
-        },
-        {
-          id: 9648,
-          checked: false
-        },
-        {
-          id: 10749,
-          checked: false
-        },
-        {
-          id: 878,
-          checked: false
-        },
-        {
-          id: 10770,
-          checked: false
-        },
-        {
-          id: 53,
-          checked: false
-        },
-        {
-          id: 10752,
-          checked: false
-        },
-        {
-          id: 37,
-          checked: false
-        }
-      ]
+      genres: [],
     };
   }
 
-  updateUser = user => {
+  updateUser = (user) => {
     this.setState({
-      user
+      user,
     });
   };
 
-  updateSessionId = session_id => {
+  updateSessionId = (session_id) => {
     cookies.set("session_id", session_id, {
       path: "/",
-      maxAge: 2592000
+      maxAge: 2592000,
     });
     this.setState({
-      session_id
+      session_id,
     });
   };
 
-  onChangeFilters = event => {
+  onLogOut = () => {
+    cookies.remove("session_id");
+
+    this.setState({
+      session_id: null,
+      user: null,
+      showModal: false
+    });
+  };
+
+  onChangeFilters = (event) => {
     const value = event.target.value;
     const name = event.target.name;
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       filters: {
         ...prevState.filters,
-        [name]: value
-      }
+        [name]: value,
+      },
     }));
   };
 
-  onChangePage = page => {
+  onChangePage = (page) => {
     this.setState({
-      // page: page
-      page
+      page,
     });
   };
 
-  onChangeTotalPage = data => {
+  onChangeTotalPage = (data) => {
     this.setState({
-      total_pages: data.total_pages
+      total_pages: data.total_pages,
     });
   };
 
@@ -145,92 +80,104 @@ export default class App extends React.Component {
     this.setState({
       filters: {
         sort_by: "popularity.desc",
-        release_year: "Выберите год"
+        release_year: "Выберите год",
       },
-      page: 1
+      page: 1,
     });
-
-    const genres = [...this.state.genres];
-    for (let genre in genres) {
-      genres[genre].checked = false;
-    }
 
     this.setState({
-      genres
+      genres: [],
     });
-    console.log(this.state.genres);
   };
 
-  onChangeGenres = event => {
-    const name = +event.target.name;
+  onChangeGenres = (event) => {
+    const genreId = +event.target.id;
 
     const genres = [...this.state.genres];
 
-    for (let genre in genres) {
-      if (genres[genre].id === name) {
-        genres[genre].checked = !genres[genre].checked;
-      }
+    if (genres.includes(genreId)) {
+      genres.splice(genres.indexOf(genreId), 1);
+    } else {
+      genres.push(genreId);
     }
 
     this.setState({
-      genres
+      genres,
     });
+    return genres;
+  };
+
+  toggleModal = () => {
+    this.setState(prev => ({
+      showModal: !prev.showModal
+    }));
   };
 
   componentDidMount() {
     const session_id = cookies.get("session_id");
     if (session_id) {
-      fetchApi(
-        `${API_URL}/account?api_key=${API_KEY_3}&session_id=${session_id}`
-      ).then(user => {
+      CallApi.get("/account", {
+        params: {
+          session_id: session_id,
+        },
+      }).then((user) => {
         this.updateUser(user);
+        this.updateSessionId(session_id);
       });
     }
   }
 
   render() {
-    const { filters, page, total_pages, genres, user } = this.state;
+    const { filters, page, total_pages, genres, user, session_id, showModal } = this.state;
 
     return (
-      <div>
-        <Header
-          user={user}
-          updateUser={this.updateUser}
-          updateSessionId={this.updateSessionId}
-        />
-        <div className="container">
-          <div className="row mt-4">
-            <div className="col-4">
-              <div className="card" style={{ width: "100%" }}>
-                <div className="card-body">
-                  <h3>Фильтры:</h3>
-                  <Filters
-                    page={page}
-                    filters={filters}
-                    onChangeFilters={this.onChangeFilters}
-                    onChangePage={this.onChangePage}
-                    total_pages={total_pages}
-                    resetFilters={this.resetFilters}
-                    onChangeGenres={this.onChangeGenres}
-                    genres={genres}
-                  />
+      <AppContext.Provider
+        value={{
+          user: user,
+          updateUser: this.updateUser,
+          updateSessionId: this.updateSessionId,
+          session_id: session_id,
+          onLogOut: this.onLogOut,
+        }}
+      >
+        <div>
+          <Header user={user} toggleModal={this.toggleModal} showModal={showModal}/>
+          <div className="container">
+            <div className="row mt-4">
+              <div className="col-4">
+                <div className="card" style={{ width: "100%" }}>
+                  <div className="card-body">
+                    <h3>Фильтры:</h3>
+                    <Filters
+                      page={page}
+                      filters={filters}
+                      onChangeFilters={this.onChangeFilters}
+                      onChangePage={this.onChangePage}
+                      total_pages={total_pages}
+                      resetFilters={this.resetFilters}
+                      onChangeGenres={this.onChangeGenres}
+                      genres={genres}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-8">
-              <MoviesList
-                filters={filters}
-                page={page}
-                onChangePage={this.onChangePage}
-                onChangeTotalPage={this.onChangeTotalPage}
-                resetFilters={this.resetFilters}
-                genres={genres}
-                onChangeGenres={this.onChangeGenres}
-              />
+              <div className="col-8">
+                <MoviesList
+                  filters={filters}
+                  page={page}
+                  onChangePage={this.onChangePage}
+                  onChangeTotalPage={this.onChangeTotalPage}
+                  resetFilters={this.resetFilters}
+                  genres={genres}
+                  onChangeGenres={this.onChangeGenres}
+                  session_id={session_id}
+                  toggleModal={this.toggleModal}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </AppContext.Provider>
     );
   }
 }

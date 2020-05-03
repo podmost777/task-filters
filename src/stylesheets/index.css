@@ -10,3 +10,11 @@ input.invalid {
   border-color: #dc3545;
 }
 
+.material-icons:hover {
+  cursor: pointer;
+}
+
+.card-preview {
+  display: flex;
+  justify-content: space-between;
+}
