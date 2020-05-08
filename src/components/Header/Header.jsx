@@ -1,6 +1,9 @@
 import React from "react";
 import Login from "./Login/Login";
 import User from "./User";
+import AppContextHOC from '../HOC/AppContextHOC';
+import { Link } from "react-router-dom";
+
 
 class Header extends React.Component {
   render() {
@@ -10,9 +13,9 @@ class Header extends React.Component {
         <div className="container">
           <ul className="navbar-nav">
             <li className="nav-item active">
-              <a className="nav-link" href="/#">
+              <Link className="nav-link" to="/">
                 Home
-              </a>
+              </Link>
             </li>
           </ul>
           {user ? (
@@ -26,4 +29,4 @@ class Header extends React.Component {
   }
 }
 
-export default Header;
+export default AppContextHOC(Header);

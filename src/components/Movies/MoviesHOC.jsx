@@ -20,7 +20,7 @@ export default (Component) =>
           : release_year;
 
       const queryStringParams = {
-        language: "ru_RU",
+        language: "ru-RU",
         sort_by: sort_by,
         page: page,
         primary_release_year: year,

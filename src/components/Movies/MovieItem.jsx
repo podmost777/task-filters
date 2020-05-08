@@ -1,5 +1,6 @@
 import React from "react";
 import CallApi from "../../api/api";
+import { Link } from "react-router-dom";
 
 export default class MovieItem extends React.Component {
   state = {
@@ -62,7 +63,7 @@ export default class MovieItem extends React.Component {
         />
         <div className="card-body">
           <div className="card-preview">
-            <h6 className="card-title">{item.title}</h6>
+            <Link className="card-title" to={`/movie/${item.id}`}>{item.title}</Link>
             <div className="icons-wrapper">
               <span
                 className="material-icons"

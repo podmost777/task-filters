@@ -18,3 +18,7 @@ input.invalid {
   display: flex;
   justify-content: space-between;
 }
+
+.movie-overview {
+  padding: 30px 0;
+}

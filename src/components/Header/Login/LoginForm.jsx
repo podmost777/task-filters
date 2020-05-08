@@ -100,6 +100,7 @@ class LoginForm extends React.Component {
         );
       })
       .catch((error) => {
+        this.props.changeClose();
         console.log("error", error);
         this.setState({
           submitting: false,
